@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dailytask-bot — Preview</title>
+  <style>
+    :root {
+      --bg:      #0d1117;
+      --surface: #161b22;
+      --surface2:#1c2128;
+      --border:  #30363d;
+      --text:    #c9d1d9;
+      --muted:   #8b949e;
+      --gold:    #e3b341;
+      --green:   #3fb950;
+      --blue:    #58a6ff;
+      --purple:  #bc8cff;
+      --red:     #f85149;
+      --orange:  #d29922;
+      --teal:    #39d353;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 60px;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(88,166,255,.12) 0%, transparent 70%);
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-label {
+      display: inline-block;
+      background: rgba(88,166,255,.12);
+      border: 1px solid rgba(88,166,255,.3);
+      color: var(--blue);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero p {
+      margin: 18px auto 0;
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+    .hero-badges {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 28px;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: .78rem;
+      font-weight: 600;
+    }
+    .b-node   { background: rgba(63,185,80,.12);  color: var(--green);  border: 1px solid rgba(63,185,80,.25); }
+    .b-claude { background: rgba(227,179,65,.12);  color: var(--gold);   border: 1px solid rgba(227,179,65,.25); }
+    .b-tg     { background: rgba(88,166,255,.12);  color: var(--blue);   border: 1px solid rgba(88,166,255,.25); }
+    .b-gmail  { background: rgba(248,81,73,.12);   color: var(--red);    border: 1px solid rgba(248,81,73,.25); }
+    .b-mit    { background: rgba(188,140,255,.12); color: var(--purple);  border: 1px solid rgba(188,140,255,.25); }
+
+    .cta-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn:hover { opacity: .82; }
+    .btn-primary { background: var(--blue); color: #0d1117; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    .section-label {
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 10px;
+    }
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -.5px;
+      margin-bottom: 12px;
+    }
+    .section-sub { color: var(--muted); max-width: 540px; }
+
+    /* ── MOCK DASHBOARD ── */
+    .mock-window {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+      margin-top: 36px;
+    }
+    .mock-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f56; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #27c93f; }
+    .mock-url {
+      flex: 1;
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      background: rgba(0,0,0,.3);
+      border-radius: 4px;
+      padding: 3px 10px;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+
+    /* dashboard inner */
+    .mock-body { display: flex; min-height: 360px; }
+    .mock-sidebar {
+      width: 180px;
+      background: var(--surface2);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      flex-shrink: 0;
+    }
+    .mock-sidebar h4 { font-size: .65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 6px;
+      font-size: .82rem;
+      margin-bottom: 2px;
+      cursor: default;
+      color: var(--muted);
+    }
+    .nav-item.active { background: rgba(88,166,255,.12); color: var(--blue); }
+    .nav-item .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    .mock-main { flex: 1; padding: 20px; overflow: hidden; }
+    .mock-main h3 { font-size: .9rem; color: #fff; margin-bottom: 14px; }
+
+    /* task items */
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: .82rem;
+    }
+    .task-check {
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid var(--border);
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .task-check.done { background: var(--green); border-color: var(--green); color: #0d1117; font-size: .7rem; }
+    .task-title { flex: 1; }
+    .task-title.done { text-decoration: line-through; color: var(--muted); }
+    .tag {
+      font-size: .65rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .tag-proj    { background: rgba(88,166,255,.15);  color: var(--blue); }
+    .tag-email   { background: rgba(248,81,73,.12);   color: var(--red); }
+    .tag-cv      { background: rgba(227,179,65,.12);  color: var(--gold); }
+    .tag-social  { background: rgba(188,140,255,.12); color: var(--purple); }
+    .tag-clients { background: rgba(63,185,80,.12);   color: var(--green); }
+    .prio { font-size: .65rem; color: var(--muted); }
+    .prio.p1 { color: var(--red); }
+    .prio.p2 { color: var(--orange); }
+
+    /* ── FEATURES GRID ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .feat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feat-card:hover { border-color: var(--blue); transform: translateY(-2px); }
+    .feat-icon { font-size: 1.6rem; margin-bottom: 10px; }
+    .feat-card h3 { font-size: .95rem; color: #fff; margin-bottom: 6px; }
+    .feat-card p  { font-size: .83rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── TELEGRAM MOCK ── */
+    .tg-mock {
+      background: #17212b;
+      border: 1px solid #2b5278;
+      border-radius: 12px;
+      overflow: hidden;
+      max-width: 380px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.5);
+    }
+    .tg-header {
+      background: #2b5278;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tg-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #29b6f6, #0288d1);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+    }
+    .tg-name { font-size: .9rem; font-weight: 600; color: #fff; }
+    .tg-status { font-size: .72rem; color: rgba(255,255,255,.5); }
+    .tg-body { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .tg-msg {
+      max-width: 85%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+    .tg-msg.bot {
+      background: #2b5278;
+      color: #fff;
+      border-bottom-left-radius: 2px;
+      align-self: flex-start;
+    }
+    .tg-msg.user {
+      background: #2f6ea0;
+      color: #fff;
+      border-bottom-right-radius: 2px;
+      align-self: flex-end;
+    }
+    .tg-msg .tg-sender { font-size: .7rem; color: #64b5f6; font-weight: 600; margin-bottom: 4px; }
+    .tg-msg code { background: rgba(255,255,255,.12); padding: 1px 5px; border-radius: 3px; font-size: .78rem; }
+    .tg-time { font-size: .65rem; color: rgba(255,255,255,.35); text-align: right; margin-top: 2px; }
+
+    /* ── JOB KANBAN ── */
+    .kanban {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-top: 36px;
+    }
+    .kanban::-webkit-scrollbar { height: 4px; }
+    .kanban::-webkit-scrollbar-track { background: transparent; }
+    .kanban::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .kanban-col {
+      flex-shrink: 0;
+      width: 200px;
+    }
+    .kanban-col h4 {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .kanban-col h4 .count {
+      background: rgba(255,255,255,.08);
+      padding: 1px 7px;
+      border-radius: 10px;
+      font-size: .68rem;
+    }
+    .job-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 8px;
+      font-size: .8rem;
+    }
+    .job-card .company { font-weight: 600; color: #fff; }
+    .job-card .position { color: var(--muted); margin-top: 2px; font-size: .75rem; }
+    .job-card .days { margin-top: 6px; font-size: .68rem; color: var(--muted); }
+
+    /* ── STATS BAR ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+      margin-top: 36px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      text-align: center;
+    }
+    .stat-num { font-size: 2rem; font-weight: 800; color: #fff; }
+    .stat-label { font-size: .78rem; color: var(--muted); margin-top: 4px; }
+    .stat-card.s-green .stat-num { color: var(--green); }
+    .stat-card.s-blue  .stat-num { color: var(--blue); }
+    .stat-card.s-gold  .stat-num { color: var(--gold); }
+    .stat-card.s-red   .stat-num { color: var(--red); }
+
+    .progress-wrap { margin-top: 36px; }
+    .progress-row { margin-bottom: 14px; }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: .78rem;
+      margin-bottom: 5px;
+    }
+    .progress-meta .cat { color: var(--text); }
+    .progress-meta .nums { color: var(--muted); }
+    .progress-bar { height: 6px; background: rgba(255,255,255,.06); border-radius: 3px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 3px; }
+
+    /* ── STACK SECTION ── */
+    .stack-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 36px;
+    }
+    .stack-chip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: .85rem;
+    }
+    .stack-chip .chip-icon { font-size: 1.2rem; }
+    .stack-chip .chip-name { color: #fff; font-weight: 600; }
+    .stack-chip .chip-note { color: var(--muted); font-size: .75rem; }
+
+    /* ── SETUP ── */
+    .setup-steps { margin-top: 36px; display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: flex;
+      gap: 20px;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 19px; top: 40px;
+      bottom: -20px;
+      width: 2px;
+      background: var(--border);
+    }
+    .step + .step { margin-top: 20px; }
+    .step-num {
+      flex-shrink: 0;
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(88,166,255,.12);
+      border: 1px solid rgba(88,166,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      color: var(--blue);
+    }
+    .step-content strong { color: #fff; display: block; margin-bottom: 6px; font-size: .95rem; }
+    .step-content code {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: .82rem;
+      color: var(--green);
+      margin-top: 6px;
+      white-space: pre;
+    }
+    .step-content p { color: var(--muted); font-size: .85rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--muted);
+      font-size: .82rem;
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--blue); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* two-col */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+    @media (max-width: 700px) {
+      .two-col { grid-template-columns: 1fr; }
+      .mock-sidebar { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-label">Open Source · Self-Hosted</div>
+  <h1>Your day,<br><span>under control.</span></h1>
+  <p>A personal productivity dashboard with Claude AI, Telegram bot, Gmail, and job tracking — running on your machine.</p>
+  <div class="hero-badges">
+    <span class="badge b-node">⬡ Node.js</span>
+    <span class="badge b-claude">✦ Claude AI</span>
+    <span class="badge b-tg">✈ Telegram Bot</span>
+    <span class="badge b-gmail">✉ Gmail IMAP</span>
+    <span class="badge b-mit">⚖ MIT License</span>
+  </div>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/iacreatorcar/dailytask-bot">⭐ Star on GitHub</a>
+    <a class="btn btn-outline" href="panoramica.html">📄 Full Docs</a>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD PREVIEW ═══ -->
+<section>
+  <div class="container">
+    <div class="section-label">Dashboard</div>
+    <div class="section-title">Everything in one place</div>
+    <p class="section-sub">A clean dark-theme interface — no bloat, no build step. One HTML file served by Express.</p>
+
+    <div class="mock-window">
+      <div class="mock-titlebar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <div class="mock-url">localhost:3000</div>
+      </div>
+      <div class="mock-body">
+        <div class="mock-sidebar">
+          <h4>Menu</h4>
+          <div class="nav-item active"><div class="nav-dot" style="background:var(--blue)"></div> Tasks</div>
+          <div class="nav-item"><div class="nav-dot" style="background:var(--gold)"></div> Jobs</div>
+          <div class="nav-item"><div class="nav-dot" style="background:var(--red)"></div> Gmail</div>
+          <div class="nav-item"><div class="nav-dot" style="background:var(--purple)"></div> AI Chat</div>
+          <div class="nav-item"><div class="nav-dot" style="background:var(--green)"></div> Stats</div>
+          <div class="nav-item"><div class="nav-dot" style="background:var(--orange)"></div> CV</div>
+          <div class="nav-item"><div class="nav-dot" style="background:var(--muted)"></div> Backup</div>
+        </div>
+        <div class="mock-main">
+          <h3>📋 Today's Tasks</h3>
+          <div class="task-item">
+            <div class="task-check done">✓</div>
+            <div class="task-title done">Review pull requests on GitHub</div>
+            <span class="tag tag-proj">projects</span>
+            <span class="prio p1">P1</span>
+          </div>
+          <div class="task-item">
+            <div class="task-check"></div>
+            <div class="task-title">Send follow-up emails to clients</div>
+            <span class="tag tag-email">email</span>
+            <span class="prio p1">P1</span>
+          </div>
+          <div class="task-item">
+            <div class="task-check"></div>
+            <div class="task-title">Update LinkedIn profile</div>
+            <span class="tag tag-cv">cv</span>
+            <span class="prio p1">P1</span>
+          </div>
+          <div class="task-item">
+            <div class="task-check"></div>
+            <div class="task-title">Post new project update</div>
+            <span class="tag tag-social">social</span>
+            <span class="prio p2">P2</span>
+          </div>
+          <div class="task-item">
+            <div class="task-check"></div>
+            <div class="task-title">Call client about project scope</div>
+            <span class="tag tag-clients">clients</span>
+            <span class="prio p2">P2</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section>
+  <div class="container">
+    <div class="section-label">Features</div>
+    <div class="section-title">Built for solo developers</div>
+    <p class="section-sub">All the tools a freelance dev or job-hunter needs, without the SaaS subscription.</p>
+    <div class="features">
+      <div class="feat-card">
+        <div class="feat-icon">✅</div>
+        <h3>Smart Task Manager</h3>
+        <p>Today / Tomorrow / Someday. Categories, priorities, subtasks, per-task reminder times. Claude AI can generate your whole task list from a single sentence.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💼</div>
+        <h3>Job Application Kanban</h3>
+        <p>Track every application through the pipeline: Saved → Applied → Interview → Offer. Auto-alerts on Monday for applications pending 3+ days.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🤖</div>
+        <h3>Claude AI Assistant</h3>
+        <p>Powered by claude-haiku-4-5. Generate tasks, prioritize your day, draft messages, break down complex work — all from a chat panel.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📲</div>
+        <h3>Telegram Bot</h3>
+        <p>Morning digest at 8am. Evening preview at 9pm. On-demand commands: <code>/oggi</code> <code>/jobs</code> <code>/gmail</code> <code>/stats</code>. No app needed — just Telegram.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📬</div>
+        <h3>Gmail Integration</h3>
+        <p>Read unread emails directly in the dashboard via IMAP. 5-minute cache. Ask the Telegram bot <code>/gmail</code> for a quick inbox summary anywhere.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">💾</div>
+        <h3>Backup Monitor</h3>
+        <p>Track which project folders were last backed up and when. Weekly Sunday alert if anything is overdue. Simple, no cloud sync needed.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TELEGRAM MOCK ═══ -->
+<section>
+  <div class="container">
+    <div class="two-col">
+      <div>
+        <div class="section-label">Telegram Bot</div>
+        <div class="section-title">Your assistant in your pocket</div>
+        <p class="section-sub">The bot sends you a morning briefing at 8am and an evening preview at 9pm — and responds to commands on demand.</p>
+        <div style="margin-top:24px;display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted)">
+            <span style="color:var(--green);font-size:1rem">●</span> Morning digest at 08:00
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted)">
+            <span style="color:var(--blue);font-size:1rem">●</span> Evening preview at 21:00
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted)">
+            <span style="color:var(--gold);font-size:1rem">●</span> Per-task reminder alarms
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;font-size:.85rem;color:var(--muted)">
+            <span style="color:var(--purple);font-size:1rem">●</span> Weekly job & backup alerts
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="tg-mock">
+          <div class="tg-header">
+            <div class="tg-avatar">🤖</div>
+            <div>
+              <div class="tg-name">dailytask-bot</div>
+              <div class="tg-status">bot · online</div>
+            </div>
+          </div>
+          <div class="tg-body">
+            <div class="tg-msg user">
+              /digest
+              <div class="tg-time">08:00</div>
+            </div>
+            <div class="tg-msg bot">
+              <div class="tg-sender">dailytask-bot</div>
+              ☀️ <strong>Good morning, Alex!</strong><br>
+              📅 Wednesday, 23 April<br><br>
+              ✅ Done yesterday: 4<br>
+              ⏳ To do today: 5<br>
+              📅 In queue tomorrow: 2<br><br>
+              <strong>📋 Today's tasks:</strong><br><br>
+              <strong>projects:</strong><br>
+              &nbsp;&nbsp;• Review pull requests<br>
+              &nbsp;&nbsp;• Deploy staging build<br><br>
+              <strong>email:</strong><br>
+              &nbsp;&nbsp;• Follow-up with clients<br><br>
+              💼 <strong>Pending applications:</strong> 3<br>
+              &nbsp;&nbsp;• Acme Corp — Tech Lead<br>
+              📬 <strong>Unread Gmail:</strong> 7
+              <div class="tg-time">08:00</div>
+            </div>
+            <div class="tg-msg user">
+              /jobs
+              <div class="tg-time">09:14</div>
+            </div>
+            <div class="tg-msg bot">
+              <div class="tg-sender">dailytask-bot</div>
+              💼 <strong>Applications (3)</strong><br><br>
+              🔵 <strong>Acme Corp</strong> — Tech Lead<br>
+              🟡 <strong>StartupXYZ</strong> — Frontend Dev<br>
+              🟣 <strong>BigTech Inc</strong> — SE II
+              <div class="tg-time">09:14</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ JOB TRACKER ═══ -->
+<section>
+  <div class="container">
+    <div class="section-label">Job Tracker</div>
+    <div class="section-title">Your hiring pipeline at a glance</div>
+    <p class="section-sub">Never lose track of an application. Full kanban from first save to offer.</p>
+    <div class="kanban">
+      <div class="kanban-col">
+        <h4 style="color:var(--blue)">🔵 Saved <span class="count">2</span></h4>
+        <div class="job-card">
+          <div class="company">BigTech Inc</div>
+          <div class="position">Software Engineer II</div>
+          <div class="days">Added today</div>
+        </div>
+        <div class="job-card">
+          <div class="company">DesignStudio</div>
+          <div class="position">Full Stack Dev</div>
+          <div class="days">Added 2 days ago</div>
+        </div>
+      </div>
+      <div class="kanban-col">
+        <h4 style="color:var(--gold)">🟡 Applied <span class="count">1</span></h4>
+        <div class="job-card">
+          <div class="company">Acme Corp</div>
+          <div class="position">Senior Dev</div>
+          <div class="days">Applied 3 days ago</div>
+        </div>
+      </div>
+      <div class="kanban-col">
+        <h4 style="color:var(--purple)">🟣 Interview <span class="count">1</span></h4>
+        <div class="job-card">
+          <div class="company">StartupXYZ</div>
+          <div class="position">Tech Lead</div>
+          <div class="days">Interview next week</div>
+        </div>
+      </div>
+      <div class="kanban-col">
+        <h4 style="color:var(--green)">🟢 Offer <span class="count">0</span></h4>
+        <div style="padding:20px;text-align:center;font-size:.78rem;color:var(--muted);background:var(--surface);border:1px dashed var(--border);border-radius:8px;">
+          Keep going 💪
+        </div>
+      </div>
+      <div class="kanban-col">
+        <h4 style="color:var(--red)">🔴 Rejected <span class="count">1</span></h4>
+        <div class="job-card" style="opacity:.5">
+          <div class="company">OldCorp</div>
+          <div class="position">Junior Dev</div>
+          <div class="days">Rejected 5 days ago</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STATS ═══ -->
+<section>
+  <div class="container">
+    <div class="section-label">Statistics</div>
+    <div class="section-title">Know your productivity</div>
+    <p class="section-sub">Live stats broken down by category, with completion bars per area of work.</p>
+    <div class="stats-grid">
+      <div class="stat-card s-green">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Completed this week</div>
+      </div>
+      <div class="stat-card s-blue">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Pending today</div>
+      </div>
+      <div class="stat-card s-gold">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Active applications</div>
+      </div>
+      <div class="stat-card s-red">
+        <div class="stat-num">7</div>
+        <div class="stat-label">Unread emails</div>
+      </div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-row">
+        <div class="progress-meta"><span class="cat">🚀 Projects</span><span class="nums">4 / 6</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:66%;background:var(--blue)"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-meta"><span class="cat">💼 CV & Jobs</span><span class="nums">2 / 4</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:50%;background:var(--gold)"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-meta"><span class="cat">👥 Clients</span><span class="nums">3 / 3</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:100%;background:var(--green)"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-meta"><span class="cat">📧 Email</span><span class="nums">1 / 3</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:33%;background:var(--red)"></div></div>
+      </div>
+      <div class="progress-row">
+        <div class="progress-meta"><span class="cat">📱 Social</span><span class="nums">0 / 2</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%;background:var(--purple)"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STACK ═══ -->
+<section>
+  <div class="container">
+    <div class="section-label">Tech Stack</div>
+    <div class="section-title">Simple. No build step. No database.</div>
+    <p class="section-sub">Just Node.js + a single HTML file. Storage is JSON files. Deploy anywhere.</p>
+    <div class="stack-grid">
+      <div class="stack-chip"><span class="chip-icon">⬡</span><div><div class="chip-name">Node.js + Express</div><div class="chip-note">Backend + REST API</div></div></div>
+      <div class="stack-chip"><span class="chip-icon">✦</span><div><div class="chip-name">Anthropic Claude</div><div class="chip-note">claude-haiku-4-5</div></div></div>
+      <div class="stack-chip"><span class="chip-icon">✈</span><div><div class="chip-name">Telegram Bot API</div><div class="chip-note">node-telegram-bot-api</div></div></div>
+      <div class="stack-chip"><span class="chip-icon">✉</span><div><div class="chip-name">ImapFlow</div><div class="chip-note">Gmail IMAP port 993</div></div></div>
+      <div class="stack-chip"><span class="chip-icon">⏰</span><div><div class="chip-name">node-cron</div><div class="chip-note">Scheduled jobs</div></div></div>
+      <div class="stack-chip"><span class="chip-icon">📄</span><div><div class="chip-name">Vanilla JS + HTML</div><div class="chip-note">Zero framework frontend</div></div></div>
+      <div class="stack-chip"><span class="chip-icon">💾</span><div><div class="chip-name">JSON files</div><div class="chip-note">No database needed</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SETUP ═══ -->
+<section>
+  <div class="container">
+    <div class="section-label">Get Started</div>
+    <div class="section-title">Running in 4 steps</div>
+    <p class="section-sub">No Docker, no cloud setup. Clone, configure, run.</p>
+    <div class="setup-steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Clone & install</strong>
+          <code>git clone https://github.com/iacreatorcar/dailytask-bot.git
+cd dailytask-bot
+npm install</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>Configure your .env</strong>
+          <code>cp .env.example .env
+# Add your Anthropic API key, Telegram token, Gmail app password</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Init data files</strong>
+          <code>cp data/tasks.example.json data/tasks.json
+cp data/jobs.example.json data/jobs.json
+cp data/config.example.json data/config.json</code>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Run</strong>
+          <code>node server.js</code>
+          <p style="margin-top:8px">Open <strong style="color:var(--blue)">http://localhost:3000</strong> — send <strong style="color:var(--blue)">/start</strong> to your Telegram bot.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <p>
+    <strong style="color:#fff">dailytask-bot</strong> &nbsp;·&nbsp;
+    MIT License &nbsp;·&nbsp;
+    <a href="https://github.com/iacreatorcar/dailytask-bot">github.com/iacreatorcar/dailytask-bot</a>
+  </p>
+  <p style="margin-top:8px">Built with Node.js · Claude AI · Telegram</p>
+</footer>
+
+</body>
+</html>

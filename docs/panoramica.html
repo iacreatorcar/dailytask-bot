@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Daily Planner — Panoramica</title>
+  <title>dailytask-bot — Full Documentation</title>
   <style>
     :root {
       --bg:        #0d1117;
@@ -238,6 +238,7 @@
       color: var(--muted);
       font-size: 0.82rem;
     }
+    footer a { color: var(--blue); text-decoration: none; }
   </style>
 </head>
 <body>
@@ -245,8 +246,8 @@
 
   <!-- HEADER -->
   <header>
-    <h1>AI Daily Planner</h1>
-    <p>Documentazione funzionale — panoramica completa dell'applicazione</p>
+    <h1>dailytask-bot</h1>
+    <p>Technical documentation — full application reference</p>
     <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
       <span class="badge badge-gold">Node.js + Express</span>
       <span class="badge badge-blue">Claude AI (Haiku)</span>
@@ -254,218 +255,218 @@
     </div>
   </header>
 
-  <!-- COS'È -->
+  <!-- WHAT IS IT -->
   <section>
-    <h2><span class="icon">📌</span> Cos'è l'applicazione</h2>
+    <h2><span class="icon">📌</span> What is it</h2>
     <div class="card" style="grid-column:1/-1">
       <p>
-        <strong style="color:var(--gold)">AI Daily Planner</strong> è un'applicazione web personale di gestione produttività con integrazione IA.
-        Combina un task manager avanzato con un assistente Claude AI, un bot Telegram per reminder automatici,
-        lettura email Gmail, monitoraggio backup e gestione candidature LinkedIn — tutto in un'unica interfaccia dark-themed.
+        <strong style="color:var(--gold)">dailytask-bot</strong> is a self-hosted personal productivity dashboard with AI integration.
+        It combines an advanced task manager with a Claude AI assistant, a Telegram bot for automatic reminders,
+        Gmail inbox reading, backup monitoring, and job application tracking — all in a single dark-themed interface.
       </p>
       <p style="margin-top:12px;color:var(--muted)">
         Backend: <strong style="color:var(--text)">Node.js + Express</strong> &nbsp;·&nbsp;
-        Frontend: <strong style="color:var(--text)">HTML/CSS/JS vanilla</strong> &nbsp;·&nbsp;
-        Persistenza: <strong style="color:var(--text)">file JSON locali</strong> &nbsp;·&nbsp;
-        Porta: <code>localhost:3000</code>
+        Frontend: <strong style="color:var(--text)">Vanilla HTML/CSS/JS</strong> &nbsp;·&nbsp;
+        Storage: <strong style="color:var(--text)">local JSON files</strong> &nbsp;·&nbsp;
+        Port: <code>localhost:3000</code>
       </p>
     </div>
   </section>
 
-  <!-- FUNZIONALITÀ -->
+  <!-- FEATURES -->
   <section>
-    <h2><span class="icon">✨</span> Funzionalità principali</h2>
+    <h2><span class="icon">✨</span> Core features</h2>
     <div class="cards">
 
       <div class="card">
-        <h3>📋 Gestione Task</h3>
+        <h3>📋 Task Manager</h3>
         <ul>
-          <li>Crea task con titolo, categoria, priorità e data</li>
-          <li>Priorità: Alta / Media / Bassa</li>
-          <li>Date: Oggi · Domani · Prima o poi</li>
-          <li>Sotto-task (subtask) per scomporre il lavoro</li>
-          <li>Note rapide per ogni task</li>
-          <li>Promemoria con orario (HH:MM)</li>
-          <li>Sposta task tra giorni facilmente</li>
+          <li>Create tasks with title, category, priority, and day</li>
+          <li>Priority levels: High / Medium / Low</li>
+          <li>Days: Today · Tomorrow · Someday</li>
+          <li>Subtasks to break down complex work</li>
+          <li>Quick notes per task</li>
+          <li>Per-task reminder time (HH:MM)</li>
+          <li>Move tasks between days easily</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>🤖 Assistente IA (Claude)</h3>
+        <h3>🤖 AI Assistant (Claude)</h3>
         <ul>
-          <li>Genera task strutturati da descrizione libera</li>
-          <li>Suggerisce le priorità ottimali del giorno</li>
-          <li>Pianifica un massimo di 7 task per domani</li>
-          <li>Scompone task complessi in sotto-task</li>
-          <li>Chat libera con contesto task pendenti</li>
-          <li>Risposte in italiano, pratiche e concise</li>
+          <li>Generate structured tasks from free text</li>
+          <li>Suggest optimal priorities for the day</li>
+          <li>Plan up to 7 tasks for tomorrow</li>
+          <li>Break complex tasks into subtasks</li>
+          <li>Free chat with pending task context</li>
+          <li>Concise, practical responses</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>💼 Candidature LinkedIn</h3>
+        <h3>💼 Job Application Tracker</h3>
         <ul>
-          <li>Kanban: Salvato → Candidato → Colloquio → Offerta → Rifiutato</li>
-          <li>Aggiunta candidatura con azienda, posizione, URL</li>
-          <li>Cambio stato candidatura</li>
-          <li>Promemoria Telegram per follow-up</li>
-          <li>Avviso lunedì per candidature stagnanti (&gt; 3 giorni)</li>
+          <li>Kanban: Saved → Applied → Interview → Offer → Rejected</li>
+          <li>Add application with company, position, URL</li>
+          <li>Update application status</li>
+          <li>Telegram reminder for follow-ups</li>
+          <li>Monday alert for stale applications (&gt; 3 days)</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>📬 Integrazione Gmail</h3>
+        <h3>📬 Gmail Integration</h3>
         <ul>
-          <li>Lettura email non lette via IMAP</li>
-          <li>Cache 5 minuti per evitare overload</li>
-          <li>Mostra mittente, oggetto e data</li>
-          <li>Conteggio email non lette in tempo reale</li>
-          <li>Refresh manuale disponibile</li>
+          <li>Read unread emails via IMAP</li>
+          <li>5-minute cache to avoid overload</li>
+          <li>Shows sender, subject, and date</li>
+          <li>Unread count in real time</li>
+          <li>Manual refresh available</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>💬 Bot Telegram</h3>
+        <h3>💬 Telegram Bot</h3>
         <ul>
-          <li><code>/oggi</code> — task di oggi</li>
-          <li><code>/domani</code> — task per domani</li>
-          <li><code>/digest</code> — riepilogo mattutino</li>
-          <li><code>/jobs</code> — candidature attive</li>
-          <li><code>/gmail</code> — email non lette</li>
-          <li><code>/stats</code> — statistiche</li>
-          <li><code>/backup</code> — stato backup</li>
+          <li><code>/oggi</code> — today's tasks</li>
+          <li><code>/domani</code> — tomorrow's tasks</li>
+          <li><code>/digest</code> — morning summary</li>
+          <li><code>/jobs</code> — active applications</li>
+          <li><code>/gmail</code> — unread emails</li>
+          <li><code>/stats</code> — statistics</li>
+          <li><code>/backup</code> — backup status</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>⏰ Reminder Automatici</h3>
+        <h3>⏰ Automatic Reminders</h3>
         <ul>
-          <li>08:00 — digest mattutino (task del giorno)</li>
-          <li>21:00 — piano per domani</li>
-          <li>Ogni minuto — promemoria con orario impostato</li>
-          <li>Domenica 10:00 — avviso backup in ritardo</li>
-          <li>Lunedì 09:00 — avviso candidature stagnanti</li>
+          <li>08:00 — morning digest (today's tasks)</li>
+          <li>21:00 — tomorrow's plan preview</li>
+          <li>Every minute — tasks with reminder time set</li>
+          <li>Sunday 10:00 — overdue backup alert</li>
+          <li>Monday 09:00 — stale applications alert</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>📊 Statistiche</h3>
+        <h3>📊 Statistics</h3>
         <ul>
-          <li>Task totali: pendenti, completati, totale</li>
-          <li>Task di oggi con % completamento</li>
-          <li>Task per domani pendenti</li>
-          <li>Completati questa settimana</li>
-          <li>Progresso per categoria con barre colorate</li>
+          <li>Total tasks: pending, completed, overall</li>
+          <li>Today's tasks with completion percentage</li>
+          <li>Tomorrow's pending count</li>
+          <li>Completed this week</li>
+          <li>Per-category progress bars</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>📄 Catalogo CV</h3>
+        <h3>📄 CV Catalog</h3>
         <ul>
-          <li>Scanner automatico cartella CV configurabile</li>
-          <li>Raggruppamento per azienda (da nome file)</li>
-          <li>Icone per tipo file: .pdf, .doc, .docx</li>
-          <li>Filtro intelligente su keywords ridondanti</li>
+          <li>Auto-scan a configurable CV folder</li>
+          <li>Group files by company (from filename)</li>
+          <li>Icons per file type: .pdf, .doc, .docx</li>
+          <li>Smart filter for redundant keywords</li>
         </ul>
       </div>
 
       <div class="card">
-        <h3>💾 Monitoraggio Backup</h3>
+        <h3>💾 Backup Monitor</h3>
         <ul>
-          <li>Traccia cartelle importanti (es. TeraBox)</li>
-          <li>Status: ✅ Oggi · ⚠️ X giorni fa · ❌ Mai</li>
-          <li>Segna data ultimo backup</li>
-          <li>Avviso Telegram se backup in ritardo (&gt; 7 gg)</li>
-          <li>Aggiungi / rimuovi cartelle da monitorare</li>
+          <li>Track important folders</li>
+          <li>Status: ✅ Today · ⚠️ X days ago · ❌ Never</li>
+          <li>Mark last backup date</li>
+          <li>Telegram alert if overdue (&gt; 7 days)</li>
+          <li>Add / remove monitored folders</li>
         </ul>
       </div>
 
     </div>
   </section>
 
-  <!-- CATEGORIE TASK -->
+  <!-- TASK CATEGORIES -->
   <section>
-    <h2><span class="icon">🏷️</span> Categorie Task</h2>
+    <h2><span class="icon">🏷️</span> Task categories</h2>
     <div class="cards">
-      <div class="card"><h3>🚀 Progetti</h3><ul><li>Sviluppo software e progetti personali</li></ul></div>
-      <div class="card"><h3>💼 CV &amp; Job</h3><ul><li>Ricerca lavoro e candidature</li></ul></div>
-      <div class="card"><h3>👥 Clienti</h3><ul><li>Attività legate ai clienti attivi</li></ul></div>
-      <div class="card"><h3>📧 Email</h3><ul><li>Gestione posta e comunicazioni</li></ul></div>
-      <div class="card"><h3>📱 Social &amp; YT</h3><ul><li>Contenuti social e YouTube</li></ul></div>
-      <div class="card"><h3>🔑 Account</h3><ul><li>Gestione account e credenziali</li></ul></div>
-      <div class="card"><h3>📌 Altro</h3><ul><li>Task vari non categorizzati</li></ul></div>
+      <div class="card"><h3>🚀 Projects</h3><ul><li>Software development and personal projects</li></ul></div>
+      <div class="card"><h3>💼 CV &amp; Jobs</h3><ul><li>Job search and applications</li></ul></div>
+      <div class="card"><h3>👥 Clients</h3><ul><li>Tasks related to active clients</li></ul></div>
+      <div class="card"><h3>📧 Email</h3><ul><li>Mail management and communications</li></ul></div>
+      <div class="card"><h3>📱 Social &amp; YT</h3><ul><li>Social media and YouTube content</li></ul></div>
+      <div class="card"><h3>🔑 Accounts</h3><ul><li>Account and credential management</li></ul></div>
+      <div class="card"><h3>📌 Other</h3><ul><li>Uncategorized tasks</li></ul></div>
     </div>
   </section>
 
   <!-- TECH STACK -->
   <section>
-    <h2><span class="icon">⚙️</span> Tech Stack</h2>
+    <h2><span class="icon">⚙️</span> Tech stack</h2>
     <table>
       <thead>
         <tr>
           <th>Layer</th>
-          <th>Tecnologia</th>
-          <th>Versione / Note</th>
+          <th>Technology</th>
+          <th>Version / Notes</th>
         </tr>
       </thead>
       <tbody>
         <tr><td>Runtime</td><td>Node.js</td><td>Server-side JavaScript</td></tr>
-        <tr><td>Web framework</td><td>Express.js</td><td>REST API + servizio static files</td></tr>
-        <tr><td>IA</td><td>Anthropic Claude Haiku</td><td><code>@anthropic-ai/sdk</code> v0.20.0 — max 1024 token</td></tr>
+        <tr><td>Web framework</td><td>Express.js</td><td>REST API + static file serving</td></tr>
+        <tr><td>AI</td><td>Anthropic Claude Haiku</td><td><code>@anthropic-ai/sdk</code> v0.20.0 — max 1024 tokens</td></tr>
         <tr><td>Telegram</td><td>node-telegram-bot-api</td><td>v0.64.0 — polling mode</td></tr>
         <tr><td>Email</td><td>imapflow</td><td>v1.3.2 — Gmail IMAP <code>port 993</code></td></tr>
-        <tr><td>Scheduling</td><td>node-cron</td><td>Cron job per digest, reminder, avvisi</td></tr>
-        <tr><td>Config</td><td>dotenv</td><td>Variabili d'ambiente da <code>.env</code></td></tr>
-        <tr><td>Frontend</td><td>HTML5 + CSS3 + JS vanilla</td><td>Dark theme GitHub-inspired, zero framework</td></tr>
-        <tr><td>Persistenza</td><td>File JSON</td><td><code>data/tasks.json</code>, <code>jobs.json</code>, <code>config.json</code></td></tr>
+        <tr><td>Scheduling</td><td>node-cron</td><td>Cron jobs for digest, reminders, alerts</td></tr>
+        <tr><td>Config</td><td>dotenv</td><td>Environment variables from <code>.env</code></td></tr>
+        <tr><td>Frontend</td><td>HTML5 + CSS3 + Vanilla JS</td><td>Dark GitHub-inspired theme, zero framework</td></tr>
+        <tr><td>Storage</td><td>JSON files</td><td><code>data/tasks.json</code>, <code>jobs.json</code>, <code>config.json</code></td></tr>
       </tbody>
     </table>
   </section>
 
-  <!-- FLUSSO -->
+  <!-- HOW IT WORKS -->
   <section>
-    <h2><span class="icon">🔄</span> Come funziona (flusso)</h2>
+    <h2><span class="icon">🔄</span> How it works</h2>
     <div class="flow">
       <div class="flow-step">
         <div class="step-num">1</div>
         <div class="step-body">
-          <strong>Avvio</strong>
-          <p><code>npm start</code> — Server Express parte su porta 3000. Il bot Telegram inizia il polling.</p>
+          <strong>Start</strong>
+          <p><code>npm start</code> — Express server starts on port 3000. Telegram bot begins polling.</p>
         </div>
       </div>
       <div class="flow-step">
         <div class="step-num">2</div>
         <div class="step-body">
           <strong>Frontend</strong>
-          <p>Il browser apre <code>localhost:3000</code> e carica l'interfaccia completa da <code>public/index.html</code>.</p>
+          <p>Browser opens <code>localhost:3000</code> and loads the full interface from <code>public/index.html</code>.</p>
         </div>
       </div>
       <div class="flow-step">
         <div class="step-num">3</div>
         <div class="step-body">
-          <strong>Gestione Task</strong>
-          <p>L'utente crea un task → il frontend chiama <code>POST /api/tasks</code> → il backend salva su <code>tasks.json</code>.</p>
+          <strong>Task management</strong>
+          <p>User creates a task → frontend calls <code>POST /api/tasks</code> → backend saves to <code>tasks.json</code>.</p>
         </div>
       </div>
       <div class="flow-step">
         <div class="step-num">4</div>
         <div class="step-body">
-          <strong>Assistente IA</strong>
-          <p>L'utente clicca un pulsante IA → il frontend invia il prompt → il backend chiama l'API Anthropic → la risposta torna nella chat.</p>
+          <strong>AI Assistant</strong>
+          <p>User clicks an AI button → frontend sends the prompt → backend calls Anthropic API → response appears in the chat panel.</p>
         </div>
       </div>
       <div class="flow-step">
         <div class="step-num">5</div>
         <div class="step-body">
           <strong>Telegram Bot</strong>
-          <p>L'utente invia un comando → il bot in polling lo riceve → esegue la logica → risponde con messaggi Markdown formattati.</p>
+          <p>User sends a command → polling bot receives it → executes logic → replies with Markdown-formatted messages.</p>
         </div>
       </div>
       <div class="flow-step">
         <div class="step-num">6</div>
         <div class="step-body">
-          <strong>Cron Jobs automatici</strong>
-          <p>Ogni minuto/ora/giorno i job schedulati inviano digest mattutini, reminder e avvisi settimanali via Telegram, senza intervento manuale.</p>
+          <strong>Automatic cron jobs</strong>
+          <p>Every minute/hour/day the scheduled jobs send morning digests, reminders, and weekly alerts via Telegram — no manual action needed.</p>
         </div>
       </div>
     </div>
@@ -473,102 +474,107 @@
 
   <!-- API ENDPOINTS -->
   <section>
-    <h2><span class="icon">🔌</span> API Endpoints</h2>
+    <h2><span class="icon">🔌</span> API endpoints</h2>
 
     <div class="endpoint-group">
-      <h3>Task</h3>
-      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/tasks</span>       <span class="desc">Leggi tutti i task</span></div>
-      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/tasks</span>       <span class="desc">Crea un nuovo task</span></div>
-      <div class="endpoint"><span class="method put">PUT</span>    <span class="path">/api/tasks/:id</span>   <span class="desc">Aggiorna un task esistente</span></div>
-      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/tasks/:id</span>   <span class="desc">Elimina un task</span></div>
+      <h3>Tasks</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/tasks</span>       <span class="desc">List all tasks</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/tasks</span>       <span class="desc">Create a new task</span></div>
+      <div class="endpoint"><span class="method put">PUT</span>    <span class="path">/api/tasks/:id</span>   <span class="desc">Update an existing task</span></div>
+      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/tasks/:id</span>   <span class="desc">Delete a task</span></div>
     </div>
 
     <div class="endpoint-group">
-      <h3>Candidature LinkedIn</h3>
-      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/jobs</span>        <span class="desc">Lista candidature</span></div>
-      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/jobs</span>        <span class="desc">Aggiungi candidatura</span></div>
-      <div class="endpoint"><span class="method put">PUT</span>    <span class="path">/api/jobs/:id</span>    <span class="desc">Aggiorna stato candidatura</span></div>
-      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/jobs/:id</span>    <span class="desc">Rimuovi candidatura</span></div>
+      <h3>Job Applications</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/jobs</span>        <span class="desc">List all applications</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/jobs</span>        <span class="desc">Add an application</span></div>
+      <div class="endpoint"><span class="method put">PUT</span>    <span class="path">/api/jobs/:id</span>    <span class="desc">Update application status</span></div>
+      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/jobs/:id</span>    <span class="desc">Remove an application</span></div>
     </div>
 
     <div class="endpoint-group">
-      <h3>Gmail &amp; IA</h3>
-      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/gmail</span>       <span class="desc">Leggi email non lette (cache 5 min)</span></div>
-      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/gmail/refresh</span> <span class="desc">Forza refresh email</span></div>
-      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/ai</span>          <span class="desc">Chiama Claude AI con prompt</span></div>
+      <h3>Gmail &amp; AI</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/gmail</span>         <span class="desc">Read unread emails (5 min cache)</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/gmail/refresh</span> <span class="desc">Force email refresh</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/ai</span>            <span class="desc">Call Claude AI with a prompt</span></div>
     </div>
 
     <div class="endpoint-group">
-      <h3>Backup &amp; Utility</h3>
-      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/backup</span>              <span class="desc">Lista cartelle monitorate</span></div>
-      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/backup/mark</span>         <span class="desc">Segna data ultimo backup</span></div>
-      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/backup/folders</span>      <span class="desc">Aggiungi cartella da monitorare</span></div>
-      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/backup/:folder</span>      <span class="desc">Rimuovi cartella dal monitoraggio</span></div>
-      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/cv-scan</span>             <span class="desc">Scansione cartella CV</span></div>
-      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/stats</span>               <span class="desc">Statistiche task e candidature</span></div>
+      <h3>Backup &amp; Utilities</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/backup</span>          <span class="desc">List monitored folders</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/backup/mark</span>     <span class="desc">Mark last backup date</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/backup/folders</span>  <span class="desc">Add folder to monitor</span></div>
+      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/backup/:folder</span>  <span class="desc">Remove folder from monitoring</span></div>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/cv-scan</span>         <span class="desc">Scan CV folder</span></div>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/stats</span>           <span class="desc">Task and job statistics</span></div>
     </div>
   </section>
 
-  <!-- STRUTTURA FILE -->
+  <!-- FILE STRUCTURE -->
   <section>
-    <h2><span class="icon">📁</span> Struttura del progetto</h2>
+    <h2><span class="icon">📁</span> Project structure</h2>
     <table>
       <thead>
-        <tr><th>File / Cartella</th><th>Scopo</th></tr>
+        <tr><th>File / Folder</th><th>Purpose</th></tr>
       </thead>
       <tbody>
-        <tr><td><code>server.js</code></td><td>Backend principale — API REST, bot Telegram, cron job, IMAP Gmail</td></tr>
-        <tr><td><code>public/index.html</code></td><td>Frontend completo — UI, logica client, dark theme</td></tr>
-        <tr><td><code>package.json</code></td><td>Dipendenze NPM e script di avvio</td></tr>
-        <tr><td><code>.env</code></td><td>Chiavi API, credenziali Gmail, token Telegram</td></tr>
-        <tr><td><code>data/tasks.json</code></td><td>Persistenza task</td></tr>
-        <tr><td><code>data/jobs.json</code></td><td>Persistenza candidature LinkedIn</td></tr>
-        <tr><td><code>data/config.json</code></td><td>Chat ID Telegram, cartelle backup monitorate</td></tr>
-        <tr><td><code>docs/panoramica.html</code></td><td>Questo documento</td></tr>
+        <tr><td><code>server.js</code></td><td>Main backend — REST API, Telegram bot, cron jobs, Gmail IMAP</td></tr>
+        <tr><td><code>public/index.html</code></td><td>Full frontend — UI, client logic, dark theme</td></tr>
+        <tr><td><code>package.json</code></td><td>NPM dependencies and start scripts</td></tr>
+        <tr><td><code>.env</code></td><td>API keys, Gmail credentials, Telegram token (git-ignored)</td></tr>
+        <tr><td><code>.env.example</code></td><td>Environment template — safe to commit</td></tr>
+        <tr><td><code>data/tasks.json</code></td><td>Task storage (git-ignored)</td></tr>
+        <tr><td><code>data/jobs.json</code></td><td>Job application storage (git-ignored)</td></tr>
+        <tr><td><code>data/config.json</code></td><td>Telegram chat ID, monitored backup folders (git-ignored)</td></tr>
+        <tr><td><code>data/*.example.json</code></td><td>Demo data — safe to commit</td></tr>
+        <tr><td><code>docs/preview.html</code></td><td>Visual landing page for community sharing</td></tr>
+        <tr><td><code>docs/panoramica.html</code></td><td>This document — full technical reference</td></tr>
       </tbody>
     </table>
   </section>
 
-  <!-- FLUSSO GIORNALIERO -->
+  <!-- DAILY FLOW -->
   <section>
-    <h2><span class="icon">📅</span> Flusso giornaliero tipico</h2>
+    <h2><span class="icon">📅</span> Typical daily flow</h2>
     <div class="cards">
       <div class="card">
-        <h3>🌅 Mattina — 08:00</h3>
+        <h3>🌅 Morning — 08:00</h3>
         <ul>
-          <li>Bot invia digest via Telegram</li>
-          <li>Riepilogo task di oggi</li>
-          <li>Candidature LinkedIn pendenti</li>
+          <li>Bot sends digest via Telegram</li>
+          <li>Summary of today's tasks</li>
+          <li>Pending job applications listed</li>
         </ul>
       </div>
       <div class="card">
-        <h3>🌞 Durante il giorno</h3>
+        <h3>🌞 During the day</h3>
         <ul>
-          <li>Aggiunta task via UI o con l'IA</li>
-          <li>Check email Gmail nell'app</li>
-          <li>Completamento task (checkbox)</li>
-          <li>Aggiornamento stato candidature</li>
+          <li>Add tasks via UI or with AI</li>
+          <li>Check Gmail inbox in the app</li>
+          <li>Complete tasks (checkbox)</li>
+          <li>Update job application statuses</li>
         </ul>
       </div>
       <div class="card">
-        <h3>🌙 Sera — 21:00</h3>
+        <h3>🌙 Evening — 21:00</h3>
         <ul>
-          <li>Bot invia piano per domani</li>
-          <li>Reminder task con orario impostato</li>
+          <li>Bot sends tomorrow's plan</li>
+          <li>Reminder for tasks with set time</li>
         </ul>
       </div>
       <div class="card">
-        <h3>📅 Settimanale</h3>
+        <h3>📅 Weekly</h3>
         <ul>
-          <li>Dom 10:00 — avviso backup in ritardo</li>
-          <li>Lun 09:00 — candidature stagnanti</li>
+          <li>Sun 10:00 — overdue backup alert</li>
+          <li>Mon 09:00 — stale applications alert</li>
         </ul>
       </div>
     </div>
   </section>
 
   <footer>
-    Generato il 23 aprile 2026 &nbsp;·&nbsp; AI Daily Planner &nbsp;·&nbsp; Uso personale
+    <a href="preview.html">← Back to preview</a> &nbsp;·&nbsp;
+    <a href="https://github.com/iacreatorcar/dailytask-bot">GitHub</a> &nbsp;·&nbsp;
+    MIT License
   </footer>
 
 </div>

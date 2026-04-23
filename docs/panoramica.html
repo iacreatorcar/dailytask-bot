@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Daily Planner — Panoramica</title>
+  <style>
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #30363d;
+      --text:      #c9d1d9;
+      --muted:     #8b949e;
+      --gold:      #c9a84c;
+      --green:     #3fb950;
+      --blue:      #58a6ff;
+      --purple:    #bc8cff;
+      --red:       #f85149;
+      --orange:    #d29922;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+      padding: 40px 20px 80px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    header {
+      text-align: center;
+      padding: 48px 0 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    header h1 {
+      font-size: 2.4rem;
+      color: var(--gold);
+      letter-spacing: -0.5px;
+    }
+    header p {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 1rem;
+    }
+    .badge {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .badge-gold  { background: rgba(201,168,76,.15); color: var(--gold); border: 1px solid rgba(201,168,76,.3); }
+    .badge-blue  { background: rgba(88,166,255,.12); color: var(--blue); border: 1px solid rgba(88,166,255,.3); }
+    .badge-green { background: rgba(63,185,80,.12);  color: var(--green); border: 1px solid rgba(63,185,80,.3); }
+
+    /* SECTIONS */
+    section {
+      margin-bottom: 48px;
+    }
+    section h2 {
+      font-size: 1.25rem;
+      color: var(--blue);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    section h2 .icon { font-size: 1.3rem; }
+
+    /* CARDS GRID */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--blue); }
+    .card h3 {
+      font-size: 0.95rem;
+      color: var(--gold);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .card ul li {
+      position: relative;
+      padding-left: 14px;
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-bottom: 4px;
+    }
+    .card ul li::before {
+      content: "›";
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      font-weight: 700;
+    }
+
+    /* TECH TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 600;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+    td {
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(48,54,61,.6);
+      color: var(--text);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(88,166,255,.04); }
+    td code {
+      background: rgba(110,118,129,.1);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.82rem;
+      color: var(--green);
+    }
+
+    /* FLOW */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      position: relative;
+    }
+    .flow-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 18px;
+      top: 38px;
+      bottom: -16px;
+      width: 2px;
+      background: var(--border);
+    }
+    .flow-step + .flow-step { margin-top: 16px; }
+    .step-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(88,166,255,.15);
+      border: 1px solid rgba(88,166,255,.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--blue);
+    }
+    .step-body strong { color: var(--text); font-size: 0.95rem; }
+    .step-body p { color: var(--muted); font-size: 0.855rem; margin-top: 2px; }
+
+    /* API ENDPOINTS */
+    .endpoint-group { margin-bottom: 24px; }
+    .endpoint-group h3 {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      margin-bottom: 8px;
+    }
+    .endpoint {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid rgba(48,54,61,.4);
+      font-size: 0.855rem;
+    }
+    .method {
+      display: inline-block;
+      min-width: 46px;
+      text-align: center;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: "SFMono-Regular", Consolas, monospace;
+    }
+    .get    { background: rgba(63,185,80,.15);  color: var(--green); }
+    .post   { background: rgba(88,166,255,.15); color: var(--blue); }
+    .put    { background: rgba(210,153,34,.15); color: var(--orange); }
+    .delete { background: rgba(248,81,73,.15);  color: var(--red); }
+    .endpoint .path { font-family: "SFMono-Regular", Consolas, monospace; color: var(--text); }
+    .endpoint .desc { color: var(--muted); font-size: 0.82rem; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <h1>AI Daily Planner</h1>
+    <p>Documentazione funzionale — panoramica completa dell'applicazione</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;">
+      <span class="badge badge-gold">Node.js + Express</span>
+      <span class="badge badge-blue">Claude AI (Haiku)</span>
+      <span class="badge badge-green">Telegram Bot</span>
+    </div>
+  </header>
+
+  <!-- COS'È -->
+  <section>
+    <h2><span class="icon">📌</span> Cos'è l'applicazione</h2>
+    <div class="card" style="grid-column:1/-1">
+      <p>
+        <strong style="color:var(--gold)">AI Daily Planner</strong> è un'applicazione web personale di gestione produttività con integrazione IA.
+        Combina un task manager avanzato con un assistente Claude AI, un bot Telegram per reminder automatici,
+        lettura email Gmail, monitoraggio backup e gestione candidature LinkedIn — tutto in un'unica interfaccia dark-themed.
+      </p>
+      <p style="margin-top:12px;color:var(--muted)">
+        Backend: <strong style="color:var(--text)">Node.js + Express</strong> &nbsp;·&nbsp;
+        Frontend: <strong style="color:var(--text)">HTML/CSS/JS vanilla</strong> &nbsp;·&nbsp;
+        Persistenza: <strong style="color:var(--text)">file JSON locali</strong> &nbsp;·&nbsp;
+        Porta: <code>localhost:3000</code>
+      </p>
+    </div>
+  </section>
+
+  <!-- FUNZIONALITÀ -->
+  <section>
+    <h2><span class="icon">✨</span> Funzionalità principali</h2>
+    <div class="cards">
+
+      <div class="card">
+        <h3>📋 Gestione Task</h3>
+        <ul>
+          <li>Crea task con titolo, categoria, priorità e data</li>
+          <li>Priorità: Alta / Media / Bassa</li>
+          <li>Date: Oggi · Domani · Prima o poi</li>
+          <li>Sotto-task (subtask) per scomporre il lavoro</li>
+          <li>Note rapide per ogni task</li>
+          <li>Promemoria con orario (HH:MM)</li>
+          <li>Sposta task tra giorni facilmente</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>🤖 Assistente IA (Claude)</h3>
+        <ul>
+          <li>Genera task strutturati da descrizione libera</li>
+          <li>Suggerisce le priorità ottimali del giorno</li>
+          <li>Pianifica un massimo di 7 task per domani</li>
+          <li>Scompone task complessi in sotto-task</li>
+          <li>Chat libera con contesto task pendenti</li>
+          <li>Risposte in italiano, pratiche e concise</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>💼 Candidature LinkedIn</h3>
+        <ul>
+          <li>Kanban: Salvato → Candidato → Colloquio → Offerta → Rifiutato</li>
+          <li>Aggiunta candidatura con azienda, posizione, URL</li>
+          <li>Cambio stato candidatura</li>
+          <li>Promemoria Telegram per follow-up</li>
+          <li>Avviso lunedì per candidature stagnanti (&gt; 3 giorni)</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📬 Integrazione Gmail</h3>
+        <ul>
+          <li>Lettura email non lette via IMAP</li>
+          <li>Cache 5 minuti per evitare overload</li>
+          <li>Mostra mittente, oggetto e data</li>
+          <li>Conteggio email non lette in tempo reale</li>
+          <li>Refresh manuale disponibile</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>💬 Bot Telegram</h3>
+        <ul>
+          <li><code>/oggi</code> — task di oggi</li>
+          <li><code>/domani</code> — task per domani</li>
+          <li><code>/digest</code> — riepilogo mattutino</li>
+          <li><code>/jobs</code> — candidature attive</li>
+          <li><code>/gmail</code> — email non lette</li>
+          <li><code>/stats</code> — statistiche</li>
+          <li><code>/backup</code> — stato backup</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>⏰ Reminder Automatici</h3>
+        <ul>
+          <li>08:00 — digest mattutino (task del giorno)</li>
+          <li>21:00 — piano per domani</li>
+          <li>Ogni minuto — promemoria con orario impostato</li>
+          <li>Domenica 10:00 — avviso backup in ritardo</li>
+          <li>Lunedì 09:00 — avviso candidature stagnanti</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📊 Statistiche</h3>
+        <ul>
+          <li>Task totali: pendenti, completati, totale</li>
+          <li>Task di oggi con % completamento</li>
+          <li>Task per domani pendenti</li>
+          <li>Completati questa settimana</li>
+          <li>Progresso per categoria con barre colorate</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📄 Catalogo CV</h3>
+        <ul>
+          <li>Scanner automatico cartella CV configurabile</li>
+          <li>Raggruppamento per azienda (da nome file)</li>
+          <li>Icone per tipo file: .pdf, .doc, .docx</li>
+          <li>Filtro intelligente su keywords ridondanti</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>💾 Monitoraggio Backup</h3>
+        <ul>
+          <li>Traccia cartelle importanti (es. TeraBox)</li>
+          <li>Status: ✅ Oggi · ⚠️ X giorni fa · ❌ Mai</li>
+          <li>Segna data ultimo backup</li>
+          <li>Avviso Telegram se backup in ritardo (&gt; 7 gg)</li>
+          <li>Aggiungi / rimuovi cartelle da monitorare</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- CATEGORIE TASK -->
+  <section>
+    <h2><span class="icon">🏷️</span> Categorie Task</h2>
+    <div class="cards">
+      <div class="card"><h3>🚀 Progetti</h3><ul><li>Sviluppo software e progetti personali</li></ul></div>
+      <div class="card"><h3>💼 CV &amp; Job</h3><ul><li>Ricerca lavoro e candidature</li></ul></div>
+      <div class="card"><h3>👥 Clienti</h3><ul><li>Attività legate ai clienti attivi</li></ul></div>
+      <div class="card"><h3>📧 Email</h3><ul><li>Gestione posta e comunicazioni</li></ul></div>
+      <div class="card"><h3>📱 Social &amp; YT</h3><ul><li>Contenuti social e YouTube</li></ul></div>
+      <div class="card"><h3>🔑 Account</h3><ul><li>Gestione account e credenziali</li></ul></div>
+      <div class="card"><h3>📌 Altro</h3><ul><li>Task vari non categorizzati</li></ul></div>
+    </div>
+  </section>
+
+  <!-- TECH STACK -->
+  <section>
+    <h2><span class="icon">⚙️</span> Tech Stack</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Layer</th>
+          <th>Tecnologia</th>
+          <th>Versione / Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Runtime</td><td>Node.js</td><td>Server-side JavaScript</td></tr>
+        <tr><td>Web framework</td><td>Express.js</td><td>REST API + servizio static files</td></tr>
+        <tr><td>IA</td><td>Anthropic Claude Haiku</td><td><code>@anthropic-ai/sdk</code> v0.20.0 — max 1024 token</td></tr>
+        <tr><td>Telegram</td><td>node-telegram-bot-api</td><td>v0.64.0 — polling mode</td></tr>
+        <tr><td>Email</td><td>imapflow</td><td>v1.3.2 — Gmail IMAP <code>port 993</code></td></tr>
+        <tr><td>Scheduling</td><td>node-cron</td><td>Cron job per digest, reminder, avvisi</td></tr>
+        <tr><td>Config</td><td>dotenv</td><td>Variabili d'ambiente da <code>.env</code></td></tr>
+        <tr><td>Frontend</td><td>HTML5 + CSS3 + JS vanilla</td><td>Dark theme GitHub-inspired, zero framework</td></tr>
+        <tr><td>Persistenza</td><td>File JSON</td><td><code>data/tasks.json</code>, <code>jobs.json</code>, <code>config.json</code></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FLUSSO -->
+  <section>
+    <h2><span class="icon">🔄</span> Come funziona (flusso)</h2>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <strong>Avvio</strong>
+          <p><code>npm start</code> — Server Express parte su porta 3000. Il bot Telegram inizia il polling.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <strong>Frontend</strong>
+          <p>Il browser apre <code>localhost:3000</code> e carica l'interfaccia completa da <code>public/index.html</code>.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <strong>Gestione Task</strong>
+          <p>L'utente crea un task → il frontend chiama <code>POST /api/tasks</code> → il backend salva su <code>tasks.json</code>.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <strong>Assistente IA</strong>
+          <p>L'utente clicca un pulsante IA → il frontend invia il prompt → il backend chiama l'API Anthropic → la risposta torna nella chat.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <strong>Telegram Bot</strong>
+          <p>L'utente invia un comando → il bot in polling lo riceve → esegue la logica → risponde con messaggi Markdown formattati.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <strong>Cron Jobs automatici</strong>
+          <p>Ogni minuto/ora/giorno i job schedulati inviano digest mattutini, reminder e avvisi settimanali via Telegram, senza intervento manuale.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- API ENDPOINTS -->
+  <section>
+    <h2><span class="icon">🔌</span> API Endpoints</h2>
+
+    <div class="endpoint-group">
+      <h3>Task</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/tasks</span>       <span class="desc">Leggi tutti i task</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/tasks</span>       <span class="desc">Crea un nuovo task</span></div>
+      <div class="endpoint"><span class="method put">PUT</span>    <span class="path">/api/tasks/:id</span>   <span class="desc">Aggiorna un task esistente</span></div>
+      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/tasks/:id</span>   <span class="desc">Elimina un task</span></div>
+    </div>
+
+    <div class="endpoint-group">
+      <h3>Candidature LinkedIn</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/jobs</span>        <span class="desc">Lista candidature</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/jobs</span>        <span class="desc">Aggiungi candidatura</span></div>
+      <div class="endpoint"><span class="method put">PUT</span>    <span class="path">/api/jobs/:id</span>    <span class="desc">Aggiorna stato candidatura</span></div>
+      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/jobs/:id</span>    <span class="desc">Rimuovi candidatura</span></div>
+    </div>
+
+    <div class="endpoint-group">
+      <h3>Gmail &amp; IA</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/gmail</span>       <span class="desc">Leggi email non lette (cache 5 min)</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/gmail/refresh</span> <span class="desc">Forza refresh email</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/ai</span>          <span class="desc">Chiama Claude AI con prompt</span></div>
+    </div>
+
+    <div class="endpoint-group">
+      <h3>Backup &amp; Utility</h3>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/backup</span>              <span class="desc">Lista cartelle monitorate</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/backup/mark</span>         <span class="desc">Segna data ultimo backup</span></div>
+      <div class="endpoint"><span class="method post">POST</span>  <span class="path">/api/backup/folders</span>      <span class="desc">Aggiungi cartella da monitorare</span></div>
+      <div class="endpoint"><span class="method delete">DEL</span> <span class="path">/api/backup/:folder</span>      <span class="desc">Rimuovi cartella dal monitoraggio</span></div>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/cv-scan</span>             <span class="desc">Scansione cartella CV</span></div>
+      <div class="endpoint"><span class="method get">GET</span>    <span class="path">/api/stats</span>               <span class="desc">Statistiche task e candidature</span></div>
+    </div>
+  </section>
+
+  <!-- STRUTTURA FILE -->
+  <section>
+    <h2><span class="icon">📁</span> Struttura del progetto</h2>
+    <table>
+      <thead>
+        <tr><th>File / Cartella</th><th>Scopo</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>server.js</code></td><td>Backend principale — API REST, bot Telegram, cron job, IMAP Gmail</td></tr>
+        <tr><td><code>public/index.html</code></td><td>Frontend completo — UI, logica client, dark theme</td></tr>
+        <tr><td><code>package.json</code></td><td>Dipendenze NPM e script di avvio</td></tr>
+        <tr><td><code>.env</code></td><td>Chiavi API, credenziali Gmail, token Telegram</td></tr>
+        <tr><td><code>data/tasks.json</code></td><td>Persistenza task</td></tr>
+        <tr><td><code>data/jobs.json</code></td><td>Persistenza candidature LinkedIn</td></tr>
+        <tr><td><code>data/config.json</code></td><td>Chat ID Telegram, cartelle backup monitorate</td></tr>
+        <tr><td><code>docs/panoramica.html</code></td><td>Questo documento</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FLUSSO GIORNALIERO -->
+  <section>
+    <h2><span class="icon">📅</span> Flusso giornaliero tipico</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>🌅 Mattina — 08:00</h3>
+        <ul>
+          <li>Bot invia digest via Telegram</li>
+          <li>Riepilogo task di oggi</li>
+          <li>Candidature LinkedIn pendenti</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🌞 Durante il giorno</h3>
+        <ul>
+          <li>Aggiunta task via UI o con l'IA</li>
+          <li>Check email Gmail nell'app</li>
+          <li>Completamento task (checkbox)</li>
+          <li>Aggiornamento stato candidature</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🌙 Sera — 21:00</h3>
+        <ul>
+          <li>Bot invia piano per domani</li>
+          <li>Reminder task con orario impostato</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>📅 Settimanale</h3>
+        <ul>
+          <li>Dom 10:00 — avviso backup in ritardo</li>
+          <li>Lun 09:00 — candidature stagnanti</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Generato il 23 aprile 2026 &nbsp;·&nbsp; AI Daily Planner &nbsp;·&nbsp; Uso personale
+  </footer>
+
+</div>
+</body>
+</html>

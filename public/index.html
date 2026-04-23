@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Daily Planner</title>
+<style>
+:root{--bg:#0d1117;--bg2:#161b22;--bg3:#21262d;--bdr:#30363d;--txt:#e6edf3;--txt2:#8b949e;--gold:#c9a84c;--green:#3fb950;--red:#f85149;--blue:#58a6ff;--purple:#bc8cff;--r:8px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;}
+#sb{width:220px;background:var(--bg2);border-right:1px solid var(--bdr);padding:20px 12px;display:flex;flex-direction:column;gap:6px;flex-shrink:0;overflow-y:auto;}
+.logo{font-size:1.05rem;font-weight:700;color:var(--gold);padding:4px 8px 14px;border-bottom:1px solid var(--bdr);margin-bottom:6px;}
+.ns{font-size:.7rem;color:var(--txt2);text-transform:uppercase;letter-spacing:.08em;padding:10px 8px 4px;}
+.nb{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r);cursor:pointer;font-size:.84rem;color:var(--txt2);border:none;background:none;width:100%;text-align:left;transition:background .15s,color .15s;}
+.nb:hover{background:var(--bg3);color:var(--txt);}
+.nb.active{background:rgba(201,168,76,.15);color:var(--gold);}
+.nb .bx{margin-left:auto;background:var(--bg3);font-size:.7rem;padding:1px 6px;border-radius:99px;color:var(--txt2);}
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#hdr{padding:14px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;background:var(--bg);}
+#hdr h1{font-size:1.1rem;font-weight:600;flex:1;}
+.dt{color:var(--txt2);font-size:.82rem;}
+.btn{padding:6px 13px;border-radius:var(--r);border:none;cursor:pointer;font-size:.82rem;transition:opacity .15s;}
+.btn:hover{opacity:.85;}
+.btn-g{background:var(--gold);color:#000;font-weight:700;}
+.btn-o{background:transparent;border:1px solid var(--bdr);color:var(--txt);}
+.btn-ai{background:linear-gradient(135deg,#1a1f35,#2a1f35);border:1px solid rgba(201,168,76,.3);color:var(--gold);}
+.btn-sm{padding:4px 9px;font-size:.76rem;}
+#cnt{flex:1;overflow-y:auto;padding:18px 22px;display:flex;gap:18px;}
+.view{display:none;flex:1;flex-direction:column;gap:14px;}
+.view.on{display:flex;}
+/* form */
+.af{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.af input,.af select{background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:7px 9px;font-size:.83rem;outline:none;}
+.af input:focus,.af select:focus{border-color:var(--gold);}
+.af input[type=text]{flex:1;min-width:160px;}
+/* task cards */
+#tl{display:flex;flex-direction:column;gap:7px;}
+.tc{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+.tcm{padding:11px 13px;display:flex;align-items:flex-start;gap:10px;}
+.tc.done .tcm{opacity:.45;}
+.pd{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.p1{background:var(--red);}.p2{background:#f0a500;}.p3{background:var(--bdr);}
+.ck{width:17px;height:17px;border-radius:4px;border:2px solid var(--bdr);cursor:pointer;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.ck.on{background:var(--green);border-color:var(--green);}
+.ck.on::after{content:'✓';color:#000;font-size:10px;font-weight:700;}
+.tb{flex:1;min-width:0;}
+.tt{font-size:.88rem;margin-bottom:4px;}.tt.x{text-decoration:line-through;color:var(--txt2);}
+.tm{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
+.tg{font-size:.7rem;padding:2px 7px;border-radius:99px;background:var(--bg3);color:var(--txt2);}
+.cp{background:rgba(88,166,255,.15);color:#58a6ff;}.cc{background:rgba(201,168,76,.15);color:var(--gold);}
+.cvc{background:rgba(63,185,80,.15);color:#3fb950;}.ce{background:rgba(248,81,73,.15);color:#f85149;}
+.cs{background:rgba(188,140,255,.15);color:#bc8cff;}.ca{background:rgba(255,166,87,.15);color:#ffa657;}
+.cr{background:rgba(88,166,255,.1);color:var(--blue);}
+.su{margin-top:8px;padding-top:8px;border-top:1px solid var(--bdr);display:flex;flex-direction:column;gap:4px;}
+.si{display:flex;align-items:center;gap:7px;font-size:.8rem;color:var(--txt2);}
+.sk{width:13px;height:13px;border-radius:3px;border:1.5px solid var(--bdr);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sk.on{background:var(--green);border-color:var(--green);}
+.sk.on::after{content:'✓';font-size:8px;color:#000;font-weight:700;}
+.ta{display:flex;gap:3px;}
+.tbtn{background:none;border:none;cursor:pointer;color:var(--txt2);padding:4px 5px;border-radius:4px;font-size:.78rem;transition:color .15s,background .15s;}
+.tbtn:hover{color:var(--txt);background:var(--bg3);}
+.tbtn.del:hover{color:var(--red);}
+.tx{border-top:1px solid var(--bdr);padding:10px 13px;background:rgba(0,0,0,.2);display:none;flex-direction:column;gap:8px;}
+.tx.open{display:flex;}
+.tx textarea{background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:7px 9px;font-size:.8rem;outline:none;resize:vertical;font-family:inherit;width:100%;}
+.tx textarea:focus{border-color:var(--gold);}
+.tx-row{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--txt2);}
+.tx-row input[type=time]{background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:5px 8px;font-size:.8rem;outline:none;}
+.tx-row input[type=time]:focus{border-color:var(--blue);}
+.empty{text-align:center;padding:40px 20px;color:var(--txt2);}
+.empty .ic{font-size:2.2rem;margin-bottom:8px;}
+/* stats */
+.sgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.sc{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:14px;text-align:center;}
+.sc .sv{font-size:2rem;font-weight:700;color:var(--gold);}
+.sc .sl{font-size:.78rem;color:var(--txt2);margin-top:3px;}
+.cbars{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:16px;}
+.cbars h3{font-size:.88rem;margin-bottom:14px;color:var(--txt2);}
+.br{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:.82rem;}
+.bl{width:90px;color:var(--txt2);flex-shrink:0;}
+.bw{flex:1;background:var(--bg3);border-radius:99px;height:8px;overflow:hidden;}
+.bf{height:100%;background:var(--gold);border-radius:99px;transition:width .4s;}
+.bf.ok{background:var(--green);}
+.bn{width:40px;text-align:right;color:var(--txt2);font-size:.76rem;}
+/* CV */
+.cvh{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:10px;}
+.cvp{flex:1;font-size:.8rem;color:var(--txt2);font-family:monospace;word-break:break-all;}
+.cvc-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;}
+.cvc-hdr{padding:11px 14px;font-size:.88rem;font-weight:600;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.cvc-hdr:hover{background:var(--bg3);}
+.cvc-files{padding:4px 14px 10px;display:flex;flex-direction:column;gap:4px;}
+.cvc-file{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:6px;font-size:.81rem;}
+.cvc-file:hover{background:var(--bg3);}
+.cvc-fn{flex:1;color:var(--txt2);}
+.ext{font-size:.7rem;padding:2px 6px;border-radius:99px;}
+.pdf{background:rgba(248,81,73,.15);color:#f85149;}.doc{background:rgba(88,166,255,.15);color:#58a6ff;}
+/* backup */
+.bkadd{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:12px;display:flex;gap:8px;}
+.bkadd input{flex:1;background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:7px 9px;font-size:.83rem;outline:none;}
+.bki{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.bkinfo{flex:1;}
+.bkfolder{font-size:.88rem;font-weight:500;}
+.bklast{font-size:.76rem;color:var(--txt2);margin-top:2px;}
+.bkst{font-size:.7rem;padding:3px 8px;border-radius:99px;}
+.stok{background:rgba(63,185,80,.15);color:#3fb950;}.stwarn{background:rgba(240,165,0,.15);color:#f0a500;}.stold{background:rgba(248,81,73,.15);color:#f85149;}
+/* LinkedIn jobs */
+.job-pipeline{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;}
+.job-col{flex:0 0 200px;background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);display:flex;flex-direction:column;gap:6px;padding:10px;}
+.job-col-hdr{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;padding:4px 6px;border-radius:6px;text-align:center;margin-bottom:4px;}
+.s-saved{background:rgba(88,166,255,.15);color:#58a6ff;}
+.s-applied{background:rgba(201,168,76,.15);color:var(--gold);}
+.s-interview{background:rgba(188,140,255,.15);color:#bc8cff;}
+.s-offer{background:rgba(63,185,80,.15);color:#3fb950;}
+.s-rejected{background:rgba(248,81,73,.1);color:#f85149;}
+.job-card{background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:8px 10px;font-size:.81rem;cursor:pointer;transition:border-color .15s;}
+.job-card:hover{border-color:var(--gold);}
+.job-company{font-weight:600;margin-bottom:2px;}
+.job-pos{color:var(--txt2);font-size:.76rem;margin-bottom:6px;}
+.job-actions{display:flex;gap:4px;flex-wrap:wrap;}
+.job-btn{background:var(--bg2);border:1px solid var(--bdr);color:var(--txt2);border-radius:4px;padding:2px 7px;cursor:pointer;font-size:.72rem;transition:all .15s;}
+.job-btn:hover{border-color:var(--gold);color:var(--gold);}
+.job-btn.del:hover{border-color:var(--red);color:var(--red);}
+.job-rem{font-size:.7rem;color:var(--blue);margin-top:4px;}
+/* Gmail */
+.gmail-hdr{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.gmail-count{font-size:1.5rem;font-weight:700;color:var(--gold);}
+.gmail-sub{font-size:.8rem;color:var(--txt2);}
+.gmail-list{display:flex;flex-direction:column;gap:6px;}
+.gmail-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:var(--r);padding:11px 14px;display:flex;align-items:flex-start;gap:12px;}
+.gmail-item:hover{border-color:rgba(201,168,76,.3);}
+.gmail-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),#a07830);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;color:#000;flex-shrink:0;}
+.gmail-body{flex:1;min-width:0;}
+.gmail-from{font-size:.85rem;font-weight:600;margin-bottom:2px;}
+.gmail-subject{font-size:.82rem;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gmail-date{font-size:.74rem;color:var(--txt2);flex-shrink:0;}
+/* AI panel */
+#ai{width:310px;flex-shrink:0;background:var(--bg2);border:1px solid rgba(201,168,76,.2);border-radius:var(--r);display:flex;flex-direction:column;max-height:calc(100vh - 110px);position:sticky;top:0;}
+#aih{padding:13px 15px;border-bottom:1px solid var(--bdr);font-size:.88rem;font-weight:600;color:var(--gold);}
+#aia{padding:10px 11px;display:flex;flex-direction:column;gap:5px;border-bottom:1px solid var(--bdr);}
+.aab{background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:7px 9px;cursor:pointer;font-size:.8rem;text-align:left;transition:border-color .15s;}
+.aab:hover{border-color:var(--gold);}
+#aim{flex:1;overflow-y:auto;padding:11px;display:flex;flex-direction:column;gap:7px;font-size:.81rem;}
+.am{padding:8px 10px;border-radius:6px;line-height:1.5;}
+.am.ai{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.15);}
+.am.usr{background:var(--bg3);color:var(--txt2);}
+.am.inf{color:var(--txt2);font-style:italic;font-size:.76rem;}
+#aiinp{padding:9px 11px;border-top:1px solid var(--bdr);display:flex;gap:6px;}
+#ait{flex:1;background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);border-radius:6px;padding:7px 9px;font-size:.81rem;outline:none;resize:none;font-family:inherit;}
+#ait:focus{border-color:var(--gold);}
+#ais{background:var(--gold);border:none;color:#000;border-radius:6px;padding:7px 11px;cursor:pointer;font-weight:700;}
+.ld{display:flex;gap:4px;padding:3px;}
+.ld span{width:6px;height:6px;border-radius:50%;background:var(--gold);animation:pu 1s infinite;}
+.ld span:nth-child(2){animation-delay:.2s;}.ld span:nth-child(3){animation-delay:.4s;}
+@keyframes pu{0%,80%,100%{opacity:.2}40%{opacity:1}}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:var(--bdr);border-radius:3px}
+</style>
+</head>
+<body>
+
+<div id="sb">
+  <div class="logo">📋 Daily Planner</div>
+  <div class="ns">Vista</div>
+  <button class="nb active" data-view="today">☀️ Oggi <span class="bx" id="bt">0</span></button>
+  <button class="nb" data-view="tomorrow">📅 Domani <span class="bx" id="bm">0</span></button>
+  <button class="nb" data-view="all">📂 Tutti <span class="bx" id="ba">0</span></button>
+  <button class="nb" data-view="done">✅ Fatti <span class="bx" id="bd">0</span></button>
+  <div class="ns" style="margin-top:6px">Lavoro</div>
+  <button class="nb" data-view="jobs">💼 LinkedIn Jobs <span class="bx" id="bj">0</span></button>
+  <button class="nb" data-view="gmail">📬 Gmail <span class="bx" id="bg_">0</span></button>
+
+  <div class="ns" style="margin-top:6px">Strumenti</div>
+  <button class="nb" data-view="stats">📊 Statistiche</button>
+  <button class="nb" data-view="cv">📄 Catalogo CV</button>
+  <button class="nb" data-view="backup">💾 Backup</button>
+  <div class="ns" style="margin-top:6px">Categoria</div>
+  <button class="nb" data-cat="projects">📁 Progetti</button>
+  <button class="nb" data-cat="cv">📤 CV & Job</button>
+  <button class="nb" data-cat="clients">🤝 Clienti</button>
+  <button class="nb" data-cat="email">📧 Email</button>
+  <button class="nb" data-cat="social">📱 Social & YT</button>
+  <button class="nb" data-cat="accounts">🔑 Account</button>
+</div>
+
+<div id="main">
+  <div id="hdr">
+    <h1 id="vtitle">☀️ Oggi</h1>
+    <span class="dt" id="hdate"></span>
+    <button class="btn btn-ai" onclick="focusAI()">✨ AI</button>
+  </div>
+  <div id="cnt">
+
+    <!-- TASK VIEW -->
+    <div class="view on" id="v-tasks">
+      <div class="af">
+        <input type="text" id="ntitle" placeholder="Aggiungi un task..." onkeydown="if(event.key==='Enter')addTask()">
+        <select id="ncat"><option value="projects">📁 Progetto</option><option value="cv">📤 CV & Job</option><option value="clients">🤝 Clienti</option><option value="email">📧 Email</option><option value="social">📱 Social</option><option value="accounts">🔑 Account</option><option value="other">• Altro</option></select>
+        <select id="nday"><option value="today">Oggi</option><option value="tomorrow">Domani</option><option value="someday">Prima o poi</option></select>
+        <select id="npri"><option value="1">🔴 Alta</option><option value="2">🟡 Media</option><option value="3">⚪ Bassa</option></select>
+        <button class="btn btn-g" onclick="addTask()">+ Aggiungi</button>
+      </div>
+      <div id="tl"></div>
+    </div>
+
+    <!-- JOBS VIEW -->
+    <div class="view" id="v-jobs">
+      <div class="af">
+        <input type="text" id="jcompany" placeholder="Azienda (es. MSC Cruises)">
+        <input type="text" id="jposition" placeholder="Posizione (es. IT Manager)">
+        <input type="text" id="jurl" placeholder="URL LinkedIn (opzionale)" style="min-width:200px">
+        <button class="btn btn-g" onclick="addJob()">+ Salva candidatura</button>
+      </div>
+      <div class="job-pipeline" id="jpipeline"></div>
+    </div>
+
+    <!-- EMAIL VIEW (solo Gmail) -->
+    <div class="view" id="v-gmail">
+      <div style="display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--bdr);padding-bottom:12px">
+        <span style="font-size:1rem;font-weight:600">📬 Gmail</span>
+        <span id="gcount" style="background:var(--bg3);padding:1px 7px;border-radius:99px;font-size:.75rem;color:var(--txt2)">—</span>
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="btn btn-o btn-sm" onclick="loadGmail()">📥 Controlla</button>
+          <button class="btn btn-g btn-sm" onclick="refreshGmail()">🔄 Refresh</button>
+        </div>
+      </div>
+      <div class="gmail-sub" id="gfetched" style="margin-bottom:8px"></div>
+      <div class="gmail-list" id="glist"><div class="empty"><div class="ic">📬</div><div>Clicca "Controlla" per caricare Gmail</div></div></div>
+    </div>
+
+    <!-- STATS VIEW -->
+    <div class="view" id="v-stats">
+      <div class="sgrid" id="sgrid"></div>
+      <div class="cbars" id="cbars"></div>
+    </div>
+
+    <!-- CV VIEW -->
+    <div class="view" id="v-cv">
+      <div class="cvh"><span>📄</span><span class="cvp" id="cvp">Caricamento...</span><button class="btn btn-o btn-sm" onclick="loadCV()">🔄 Aggiorna</button></div>
+      <div id="cvcat"></div>
+    </div>
+
+    <!-- BACKUP VIEW -->
+    <div class="view" id="v-backup">
+      <div class="bkadd">
+        <input type="text" id="bkin" placeholder="es: C:\Users\Carmine\Desktop\Progetti" onkeydown="if(event.key==='Enter')addBK()">
+        <button class="btn btn-g" onclick="addBK()">+ Aggiungi cartella</button>
+      </div>
+      <div id="bklist"></div>
+    </div>
+
+    <!-- AI PANEL -->
+    <div id="ai">
+      <div id="aih">✨ AI Assistant</div>
+      <div id="aia">
+        <button class="aab" onclick="aiGen()">🪄 Genera task da descrizione</button>
+        <button class="aab" onclick="aiPri()">🎯 Priorità del giorno</button>
+        <button class="aab" onclick="aiTmr()">📅 Pianifica domani</button>
+      </div>
+      <div id="aim"><div class="am inf">Ciao! Usa i pulsanti o scrivi qui sotto.</div></div>
+      <div id="aiinp">
+        <textarea id="ait" rows="2" placeholder="Scrivi qui..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAI()}"></textarea>
+        <button id="ais" onclick="sendAI()">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let tasks=[], jobs=[], view='today', catF=null;
+document.getElementById('hdate').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+const api={
+  get:       ()     => fetch('/api/tasks').then(r=>r.json()),
+  add:       t      => fetch('/api/tasks',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)}).then(r=>r.json()),
+  upd:       (id,t) => fetch(`/api/tasks/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(t)}).then(r=>r.json()),
+  del:       id     => fetch(`/api/tasks/${id}`,{method:'DELETE'}),
+  ai:        p      => fetch('/api/ai',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt:p})}).then(r=>r.json()),
+  stats:     ()     => fetch('/api/stats').then(r=>r.json()),
+  cvScan:    ()     => fetch('/api/cv-scan').then(r=>r.json()),
+  bkGet:     ()     => fetch('/api/backup').then(r=>r.json()),
+  bkMark:    f      => fetch('/api/backup/mark',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({folder:f})}).then(r=>r.json()),
+  bkAdd:     f      => fetch('/api/backup/folders',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({folder:f})}).then(r=>r.json()),
+  bkDel:     f      => fetch(`/api/backup/${encodeURIComponent(f)}`,{method:'DELETE'}),
+  jobsGet:   ()     => fetch('/api/jobs').then(r=>r.json()),
+  jobAdd:    j      => fetch('/api/jobs',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(j)}).then(r=>r.json()),
+  jobUpd:    (id,j) => fetch(`/api/jobs/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(j)}).then(r=>r.json()),
+  jobDel:    id     => fetch(`/api/jobs/${id}`,{method:'DELETE'}),
+  gmail:     ()     => fetch('/api/gmail').then(r=>r.json()),
+  gmailRef:  ()     => fetch('/api/gmail/refresh',{method:'POST'}).then(r=>r.json())
+};
+
+const catLbl={projects:'📁 Progetto',cv:'📤 CV',clients:'🤝 Clienti',email:'📧 Email',social:'📱 Social',accounts:'🔑 Account',other:'• Altro'};
+const catCls={projects:'cp',cv:'cvc',clients:'cc',email:'ce',social:'cs',accounts:'ca',other:''};
+const vTitles={today:'☀️ Oggi',tomorrow:'📅 Domani',all:'📂 Tutti',done:'✅ Completati',jobs:'💼 LinkedIn Jobs',gmail:'📬 Gmail',stats:'📊 Statistiche',cv:'📄 Catalogo CV',backup:'💾 Backup'};
+const taskViews=new Set(['today','tomorrow','all','done']);
+
+async function load(){const d=await api.get();tasks=d.tasks||[];const jd=await api.jobsGet();jobs=jd.jobs||[];render();}
+
+function filtered(){
+  let t=tasks;
+  if(view==='today') t=t.filter(x=>x.day==='today'&&!x.done);
+  else if(view==='tomorrow') t=t.filter(x=>x.day==='tomorrow'&&!x.done);
+  else if(view==='done') t=t.filter(x=>x.done);
+  else t=t.filter(x=>!x.done);
+  if(catF) t=t.filter(x=>x.category===catF);
+  return t.sort((a,b)=>(a.priority||3)-(b.priority||3));
+}
+
+function render(){
+  document.getElementById('bt').textContent=tasks.filter(t=>t.day==='today'&&!t.done).length;
+  document.getElementById('bm').textContent=tasks.filter(t=>t.day==='tomorrow'&&!t.done).length;
+  document.getElementById('ba').textContent=tasks.filter(t=>!t.done).length;
+  document.getElementById('bd').textContent=tasks.filter(t=>t.done).length;
+  document.getElementById('bj').textContent=jobs.filter(j=>!['rejected'].includes(j.status)).length;
+  document.getElementById('vtitle').textContent=catF?catLbl[catF]:(vTitles[view]||view);
+  const isTask=taskViews.has(view)||!!catF;
+  ['tasks','jobs','gmail','stats','cv','backup'].forEach(v=>document.getElementById(`v-${v}`).classList.toggle('on',isTask?v==='tasks':v===view));
+  document.getElementById('ai').style.display=isTask?'flex':'none';
+  if(view==='stats'){renderStats();return;}
+  if(view==='cv'){loadCV();return;}
+  if(view==='backup'){loadBackup();return;}
+  if(view==='jobs'){renderJobs();return;}
+  if(view==='gmail'){return;} // loaded on demand
+  renderTasks();
+}
+
+function renderTasks(){
+  const list=filtered(),el=document.getElementById('tl');
+  if(!list.length){el.innerHTML='<div class="empty"><div class="ic">✨</div><div>Nessun task qui</div></div>';return;}
+  el.innerHTML=list.map(t=>`
+    <div class="tc ${t.done?'done':''}" id="tc-${t.id}">
+      <div class="tcm">
+        <div class="pd p${t.priority||3}"></div>
+        <div class="ck ${t.done?'on':''}" onclick="toggle('${t.id}')"></div>
+        <div class="tb">
+          <div class="tt ${t.done?'x':''}">${t.title}</div>
+          <div class="tm">
+            <span class="tg ${catCls[t.category]||''}">${catLbl[t.category]||t.category}</span>
+            <span class="tg">${t.day==='today'?'Oggi':t.day==='tomorrow'?'Domani':'Prima o poi'}</span>
+            ${t.reminderTime?`<span class="tg cr">⏰ ${t.reminderTime}</span>`:''}
+            ${t.notes?'<span class="tg">📝</span>':''}
+          </div>
+          ${t.subtasks&&t.subtasks.length?`<div class="su">${t.subtasks.map((s,i)=>`<div class="si"><div class="sk ${s.done?'on':''}" onclick="toggleSub('${t.id}',${i})"></div><span style="${s.done?'text-decoration:line-through':''}">${s.title}</span></div>`).join('')}</div>`:''
+          }
+        </div>
+        <div class="ta">
+          <button class="tbtn" onclick="toggleExpand('${t.id}')" title="Note/Promemoria">📌</button>
+          <button class="tbtn" onclick="aiDecomp('${t.id}')" title="Scomponi">🤖</button>
+          <button class="tbtn" onclick="move('${t.id}')">${t.day==='today'?'📅':'☀️'}</button>
+          <button class="tbtn del" onclick="del('${t.id}')">🗑</button>
+        </div>
+      </div>
+      <div class="tx" id="tx-${t.id}">
+        <textarea rows="2" placeholder="Note rapide..." onblur="saveNote('${t.id}',this.value)">${t.notes||''}</textarea>
+        <div class="tx-row">
+          <span>⏰ Promemoria Telegram:</span>
+          <input type="time" value="${t.reminderTime||''}" onchange="saveReminder('${t.id}',this.value)">
+          ${t.reminderTime?`<button class="btn btn-o btn-sm" onclick="saveReminder('${t.id}','')">✕</button>`:''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleExpand(id){document.getElementById(`tx-${id}`).classList.toggle('open');}
+async function saveNote(id,val){const t=tasks.find(x=>x.id===id);if(!t||t.notes===val)return;Object.assign(t,await api.upd(id,{notes:val}));}
+async function saveReminder(id,val){const t=tasks.find(x=>x.id===id);Object.assign(t,await api.upd(id,{reminderTime:val||null}));render();}
+async function addTask(){const title=document.getElementById('ntitle').value.trim();if(!title)return;tasks.push(await api.add({title,category:document.getElementById('ncat').value,day:document.getElementById('nday').value,priority:+document.getElementById('npri').value}));document.getElementById('ntitle').value='';render();}
+async function toggle(id){const t=tasks.find(x=>x.id===id);Object.assign(t,await api.upd(id,{done:!t.done}));render();}
+async function toggleSub(tid,i){const t=tasks.find(x=>x.id===tid);t.subtasks[i].done=!t.subtasks[i].done;Object.assign(t,await api.upd(tid,{subtasks:t.subtasks}));render();}
+async function del(id){await api.del(id);tasks=tasks.filter(t=>t.id!==id);render();}
+async function move(id){const t=tasks.find(x=>x.id===id);Object.assign(t,await api.upd(id,{day:{today:'tomorrow',tomorrow:'someday',someday:'today'}[t.day]}));render();}
+
+// ── JOBS ─────────────────────────────────────────────────────────────────────
+const JOB_STATUSES=[['saved','🔵 Salvato'],['applied','🟡 Candidato'],['interview','🟣 Colloquio'],['offer','🟢 Offerta'],['rejected','🔴 Rifiutato']];
+
+function renderJobs(){
+  const el=document.getElementById('jpipeline');
+  el.innerHTML=JOB_STATUSES.map(([st,lbl])=>{
+    const jlist=jobs.filter(j=>j.status===st);
+    return `<div class="job-col">
+      <div class="job-col-hdr s-${st}">${lbl} (${jlist.length})</div>
+      ${jlist.map(j=>{
+        const safe=j.id;
+        return `<div class="job-card">
+          <div class="job-company">${j.company}</div>
+          <div class="job-pos">${j.position}</div>
+          ${j.reminderTime?`<div class="job-rem">⏰ ${j.reminderTime}</div>`:''}
+          <div class="job-actions">
+            ${JOB_STATUSES.filter(([s])=>s!==st).map(([s,l])=>`<button class="job-btn" onclick="setJobStatus('${safe}','${s}')">${l.split(' ')[0]}</button>`).join('')}
+            <button class="job-btn" onclick="setJobReminder('${safe}')">⏰</button>
+            ${j.url?`<a href="${j.url}" target="_blank" style="text-decoration:none"><button class="job-btn">🔗</button></a>`:''}
+            <button class="job-btn del" onclick="delJob('${safe}')">🗑</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+
+async function addJob(){
+  const company=document.getElementById('jcompany').value.trim();
+  const position=document.getElementById('jposition').value.trim();
+  if(!company||!position)return;
+  jobs.push(await api.jobAdd({company,position,url:document.getElementById('jurl').value.trim()}));
+  document.getElementById('jcompany').value='';
+  document.getElementById('jposition').value='';
+  document.getElementById('jurl').value='';
+  render();
+}
+
+async function setJobStatus(id,status){
+  const j=jobs.find(x=>x.id===id);
+  const upd={status};
+  if(status==='applied') upd.appliedDate=new Date().toISOString();
+  Object.assign(j,await api.jobUpd(id,upd));
+  render();
+}
+
+async function setJobReminder(id){
+  const time=prompt('Orario promemoria Telegram (HH:MM, vuoto per rimuovere):');
+  if(time===null)return;
+  const j=jobs.find(x=>x.id===id);
+  Object.assign(j,await api.jobUpd(id,{reminderTime:time||null}));
+  render();
+}
+
+async function delJob(id){await api.jobDel(id);jobs=jobs.filter(j=>j.id!==id);render();}
+
+// ── GMAIL ─────────────────────────────────────────────────────────────────────
+async function loadGmail(force=false){
+  const el=document.getElementById('glist');
+  el.innerHTML='<div class="empty"><div class="ic">⏳</div><div>Connessione a Gmail...</div></div>';
+  try{
+    const d=force?await api.gmailRef():await api.gmail();
+    if(d.error){el.innerHTML=`<div class="empty"><div class="ic">❌</div><div>${d.error}</div></div>`;return;}
+    document.getElementById('gcount').textContent=d.total;
+    document.getElementById('gfetched').textContent=d.fetchedAt?'Aggiornato: '+new Date(d.fetchedAt).toLocaleTimeString('it-IT'):'';
+    document.getElementById('bg_').textContent=d.total;
+    if(!d.emails.length){el.innerHTML='<div class="empty"><div class="ic">🎉</div><div>Inbox zero! Nessuna email non letta</div></div>';return;}
+    el.innerHTML=d.emails.map(e=>{
+      const initial=(e.from||'?')[0].toUpperCase();
+      const dateStr=e.date?new Date(e.date).toLocaleDateString('it-IT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+      return `<div class="gmail-item">
+        <div class="gmail-avatar">${initial}</div>
+        <div class="gmail-body">
+          <div class="gmail-from">${e.from}</div>
+          <div class="gmail-subject">${e.subject}</div>
+        </div>
+        <div class="gmail-date">${dateStr}</div>
+      </div>`;
+    }).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ic">❌</div><div>${e.message}</div></div>`;}
+}
+function refreshGmail(){loadGmail(true);}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+async function renderStats(){
+  const s=await api.stats();
+  const pct=(a,b)=>b>0?Math.round(a/b*100):0;
+  document.getElementById('sgrid').innerHTML=`
+    <div class="sc"><div class="sv">${s.pending}</div><div class="sl">⏳ Da fare</div></div>
+    <div class="sc"><div class="sv" style="color:var(--green)">${s.done}</div><div class="sl">✅ Completati</div></div>
+    <div class="sc"><div class="sv">${s.weekDone}</div><div class="sl">📅 Questa settimana</div></div>
+    <div class="sc"><div class="sv">${s.today?pct(s.today.done,s.today.total):0}%</div><div class="sl">☀️ Completamento oggi</div></div>`;
+  const names={projects:'Progetti',cv:'CV & Job',clients:'Clienti',email:'Email',social:'Social',accounts:'Account',other:'Altro'};
+  document.getElementById('cbars').innerHTML='<h3>Avanzamento per categoria</h3>'+
+    Object.entries(s.byCategory).map(([cat,d])=>{
+      const p=pct(d.done,d.total);
+      return `<div class="br"><div class="bl">${names[cat]}</div><div class="bw"><div class="bf ${d.total===d.done&&d.total>0?'ok':''}" style="width:${p}%"></div></div><div class="bn">${d.done}/${d.total}</div></div>`;
+    }).join('');
+}
+
+// ── CV ────────────────────────────────────────────────────────────────────────
+async function loadCV(){
+  const el=document.getElementById('cvcat');
+  el.innerHTML='<div class="empty"><div class="ic">⏳</div><div>Scansione...</div></div>';
+  try{
+    const d=await api.cvScan();
+    if(d.error){el.innerHTML=`<div class="empty"><div class="ic">❌</div><div>${d.error}</div><small style="color:var(--txt2);margin-top:8px;display:block">${d.tip||''}</small></div>`;return;}
+    document.getElementById('cvp').textContent=`${d.path} · ${d.total} file`;
+    const ext=f=>f.match(/\.pdf$/i)?'<span class="ext pdf">PDF</span>':f.match(/\.docx?$/i)?'<span class="ext doc">DOC</span>':'';
+    el.innerHTML=Object.entries(d.catalog).sort((a,b)=>a[0].localeCompare(b[0])).map(([co,files])=>`
+      <div class="cvc-card">
+        <div class="cvc-hdr" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none'">
+          <span>🏢 ${co} <small style="color:var(--txt2);font-weight:400">(${files.length})</small></span>
+          <span style="color:var(--txt2);font-size:.8rem">▼</span>
+        </div>
+        <div class="cvc-files" style="display:none">${files.map(f=>`<div class="cvc-file"><span>📄</span><span class="cvc-fn">${f}</span>${ext(f)}</div>`).join('')}</div>
+      </div>`).join('');
+  }catch(e){el.innerHTML=`<div class="empty"><div class="ic">❌</div><div>${e.message}</div></div>`;}
+}
+
+// ── BACKUP ────────────────────────────────────────────────────────────────────
+async function loadBackup(){
+  const el=document.getElementById('bklist');
+  const{backups}=await api.bkGet();
+  if(!backups.length){el.innerHTML='<div class="empty"><div class="ic">💾</div><div>Aggiungi cartelle da monitorare per TeraBox</div></div>';return;}
+  const stInfo=b=>{if(!b.lastBackup)return['stold','❌ Mai'];const d=Math.floor((Date.now()-new Date(b.lastBackup))/86400000);return d===0?['stok','✅ Oggi']:d<=7?['stwarn',`⚠️ ${d}gg fa`]:['stold',`❌ ${d}gg fa`];};
+  el.innerHTML=backups.map(b=>{const[cls,lbl]=stInfo(b);const s=b.folder.replace(/'/g,"\\'");return`<div class="bki"><div style="font-size:1.4rem">💾</div><div class="bkinfo"><div class="bkfolder">${b.folder}</div><div class="bklast">${b.lastBackup?'Ultimo: '+new Date(b.lastBackup).toLocaleDateString('it-IT'):'Nessun backup'}</div></div><span class="bkst ${cls}">${lbl}</span><button class="btn btn-g btn-sm" onclick="markBK('${s}')">✅ Fatto</button><button class="tbtn del" onclick="delBK('${s}')">🗑</button></div>`;}).join('');
+}
+async function addBK(){const f=document.getElementById('bkin').value.trim();if(!f)return;await api.bkAdd(f);document.getElementById('bkin').value='';loadBackup();}
+async function markBK(f){await api.bkMark(f);loadBackup();}
+async function delBK(f){await api.bkDel(f);loadBackup();}
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));b.classList.add('active');view=b.dataset.view;catF=null;render();}));
+document.querySelectorAll('[data-cat]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.nb').forEach(x=>x.classList.remove('active'));b.classList.add('active');catF=b.dataset.cat;view='all';render();}));
+
+// ── AI ────────────────────────────────────────────────────────────────────────
+function aiMsg(txt,cls='ai'){const el=document.getElementById('aim');const d=document.createElement('div');d.className=`am ${cls}`;d.innerHTML=txt.replace(/\n/g,'<br>');el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function aiLoader(){const el=document.getElementById('aim');const d=document.createElement('div');d.className='am ai';d.innerHTML='<div class="ld"><span></span><span></span><span></span></div>';el.appendChild(d);el.scrollTop=el.scrollHeight;return d;}
+async function callAI(p){const l=aiLoader();try{const r=await api.ai(p);l.remove();return r.text;}catch(e){l.remove();aiMsg('❌ Errore API');return null;}}
+async function sendAI(){const inp=document.getElementById('ait'),txt=inp.value.trim();if(!txt)return;inp.value='';aiMsg(txt,'usr');const ctx=JSON.stringify(tasks.filter(t=>!t.done).map(t=>({title:t.title,category:t.category,day:t.day})));const r=await callAI(`Assistente produttività. Task: ${ctx}\n\nDomanda: ${txt}\n\nIn italiano, pratico e conciso.`);if(r)aiMsg(r);}
+async function aiGen(){const desc=prompt('Descrivi cosa devi fare:');if(!desc)return;const r=await callAI(`Task da: "${desc}". SOLO JSON: [{"title":"...","category":"projects|cv|clients|email|social|accounts|other","day":"today|tomorrow","priority":1|2|3}]`);if(!r)return;try{const items=JSON.parse(r.replace(/```json|```/g,'').trim());for(const it of items)tasks.push(await api.add(it));render();aiMsg(`✅ ${items.length} task creati:\n${items.map(i=>`• ${i.title}`).join('\n')}`);}catch{aiMsg('Errore parsing. Riprova.');}}
+async function aiPri(){const t=tasks.filter(x=>x.day==='today'&&!x.done);if(!t.length){aiMsg('Nessun task oggi!');return;}const r=await callAI(`Ordine ottimale oggi: ${JSON.stringify(t.map(x=>({title:x.title,category:x.category})))}. In italiano.`);if(r)aiMsg(r);}
+async function aiTmr(){const note=prompt('Note per domani:')||'';const r=await callAI(`Pianifica domani (max 7). Pending: ${JSON.stringify(tasks.filter(t=>!t.done).slice(0,20))}. Note: "${note}". In italiano.`);if(r)aiMsg(r);}
+async function aiDecomp(id){const t=tasks.find(x=>x.id===id);if(!t)return;const r=await callAI(`Scomponi max 5 sotto-task: "${t.title}". SOLO JSON: [{"title":"..."}]`);if(!r)return;try{const items=JSON.parse(r.replace(/```json|```/g,'').trim());Object.assign(t,await api.upd(id,{subtasks:[...(t.subtasks||[]),...items.map(i=>({title:i.title,done:false}))]}));render();aiMsg(`✅ "${t.title}" → ${items.length} sotto-task`);}catch{aiMsg('Errore. Riprova.');}}
+function focusAI(){document.getElementById('ait').focus();}
+load();
+</script>
+</body>
+</html>
